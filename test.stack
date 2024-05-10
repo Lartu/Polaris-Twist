@@ -1,0 +1,3 @@
+# Polaris Quine
+("(" @f ") >f f%" fprint) >f f%
+stack
