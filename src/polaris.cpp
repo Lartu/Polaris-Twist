@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
         std::cerr << "Usage: " << argv[0] << " <filename>\n";
         return 1;
     }
-
     else if (argc >= 2 && std::string(argv[1]) == "-v")
     {
         std::cout << std::endl;
@@ -25,7 +24,6 @@ int main(int argc, char *argv[])
         std::cout << std::endl;
         return 0;
     }
-
     else
     {
         size_t intr_id = new_interpreter();

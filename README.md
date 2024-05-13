@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/polaris_image.png">
+  <img src="images/altlogo.png">
   <br><br>
   <img src="https://img.shields.io/badge/version-1.0-blue.svg">
   <img src="https://img.shields.io/badge/apache-_2.0-yellow">
