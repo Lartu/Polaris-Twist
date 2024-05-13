@@ -18,7 +18,7 @@ It has been written in C++98, so it can probably be compiled with any C++ compil
 ```
 
 ## Building Polaris Twist
-To build Polaris Twist, clone this repository and run `make`. You can install it using `make install`.
+To build Polaris Twist, clone this repository and run `make`. You can install it using `make install`. You can uninstall it with `make uninstall`.
 
 ## Documentation
 I owe you the documentation. Sorry! Soon!
