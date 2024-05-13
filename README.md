@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/apache-_2.0-yellow">
 </p>
 
-**Polaris Twist** is a stack-based, concatenative, interpreted programming language with strings as its only data type. It's a revision of the original [Polaris](https://github.com/Lartu/polaris/tree/master),
+**Polaris Twist** 🍋 is a refreshing stack-based, concatenative, interpreted programming language with strings as its only data type. It's a revision of the original [Polaris](https://github.com/Lartu/polaris/tree/master),
 much faster and with [Foreign Function Interface](https://en.wikipedia.org/wiki/Foreign_function_interface)
 support.
 It has been designed to be **small** in size and **minimal** in language features.
