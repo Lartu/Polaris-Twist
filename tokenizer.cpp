@@ -9,21 +9,21 @@ void add_word(std::string &word, StringType type, std::vector<PolarisWord> *word
             if (word[0] == '>')
             {
                 word = word.substr(1);
-                word_list->push_back(PolarisWord(word, type));
-                word_list->push_back(PolarisWord("set", type));
+                word_list->push_back(PolarisWord(word, sBLOCK));
+                word_list->push_back(PolarisWord("set", sWORD));
             }
             else if (word[0] == '@')
             {
                 word = word.substr(1);
-                word_list->push_back(PolarisWord(word, type));
-                word_list->push_back(PolarisWord("get", type));
+                word_list->push_back(PolarisWord(word, sBLOCK));
+                word_list->push_back(PolarisWord("get", sWORD));
             }
             else if (word.back() == '%')
             {
                 word = word.substr(0, word.length() - 1);
-                word_list->push_back(PolarisWord(word, type));
-                word_list->push_back(PolarisWord("get", type));
-                word_list->push_back(PolarisWord("eval", type));
+                word_list->push_back(PolarisWord(word, sBLOCK));
+                word_list->push_back(PolarisWord("get", sWORD));
+                word_list->push_back(PolarisWord("eval", sWORD));
             }
             else
             {
@@ -51,22 +51,22 @@ std::pair<bool, std::vector<PolarisWord> *> split_words(PolarisInterpreter &intr
     std::string current_token = "";
     bool in_string = false;
     size_t block_string_depth = 0;
-    bool in_comment = false;
+    size_t comment_depth = 0;
     bool escaping_char = false;
     for (size_t i = 0; i < code.length(); ++i)
     {
         char current_char = code[i];
-        if (current_char == '"' && !escaping_char && !in_comment && !in_string && block_string_depth == 0)
+        if (current_char == '"' && !escaping_char && comment_depth == 0 && !in_string && block_string_depth == 0)
         {
             add_word(current_token, sWORD, tokens);
             in_string = true;
         }
-        else if (current_char == '"' && !escaping_char && !in_comment && in_string && block_string_depth == 0)
+        else if (current_char == '"' && !escaping_char && comment_depth == 0 && in_string && block_string_depth == 0)
         {
             add_word(current_token, sQUOTED, tokens);
             in_string = false;
         }
-        else if (current_char == '(' && !escaping_char && !in_comment && !in_string)
+        else if (current_char == '(' && !escaping_char && comment_depth == 0 && !in_string)
         {
             if (block_string_depth == 0)
             {
@@ -78,7 +78,7 @@ std::pair<bool, std::vector<PolarisWord> *> split_words(PolarisInterpreter &intr
             }
             ++block_string_depth;
         }
-        else if (current_char == ')' && !escaping_char && !in_comment && !in_string)
+        else if (current_char == ')' && !escaping_char && comment_depth == 0 && !in_string)
         {
             if (block_string_depth == 0)
             {
@@ -97,32 +97,35 @@ std::pair<bool, std::vector<PolarisWord> *> split_words(PolarisInterpreter &intr
                 }
             }
         }
-        else if (current_char == '[' && !escaping_char && !in_comment && !in_string && block_string_depth == 0)
+        else if (current_char == '[' && !escaping_char && !in_string && block_string_depth == 0)
         {
-            add_word(current_token, sWORD, tokens);
-            in_comment = true;
+            if (comment_depth == 0)
+            {
+                add_word(current_token, sWORD, tokens);
+            }
+            ++comment_depth;
         }
         else if (current_char == ']' && !escaping_char && !in_string && block_string_depth == 0)
         {
-            if (!in_comment)
+            if (comment_depth == 0)
             {
                 return parsing_error(intr, "] found without opening [", tokens);
             }
             else
             {
-                in_comment = false;
+                --comment_depth;
             }
         }
-        else if (isspace(current_char) && !in_comment && !in_string && block_string_depth == 0)
+        else if (isspace(current_char) && comment_depth == 0 && !in_string && block_string_depth == 0)
         {
             add_word(current_token, sWORD, tokens);
         }
-        else if (!in_comment && in_string && escaping_char && block_string_depth == 0)
+        else if (comment_depth == 0 && in_string && escaping_char && block_string_depth == 0)
         {
             current_token += current_char;
             escaping_char = false;
         }
-        else if (!in_comment && !escaping_char)
+        else if (comment_depth == 0 && !escaping_char)
         {
             if (in_string && current_char == '\\')
             {
@@ -139,7 +142,7 @@ std::pair<bool, std::vector<PolarisWord> *> split_words(PolarisInterpreter &intr
     add_word(current_token, sWORD, tokens);
 
     // Sanity Checks:
-    if (in_comment)
+    if (comment_depth > 0)
     {
         return parsing_error(intr, "Open comment without terminating ']'.", tokens);
     }
@@ -149,7 +152,7 @@ std::pair<bool, std::vector<PolarisWord> *> split_words(PolarisInterpreter &intr
     }
     if (block_string_depth > 0)
     {
-        return parsing_error(intr, "Open block string without terminating ')' (depth: " + intr.number_to_string(block_string_depth) + ").", tokens);
+        return parsing_error(intr, "Open block string without terminating ')' (depth: " + number_to_string(block_string_depth) + ").", tokens);
     }
     if (escaping_char)
     {
@@ -157,4 +160,12 @@ std::pair<bool, std::vector<PolarisWord> *> split_words(PolarisInterpreter &intr
     }
 
     return std::pair<bool, std::vector<PolarisWord> *>(true, tokens);
+}
+
+std::string number_to_string(double value)
+{
+    std::string str = std::to_string(value);
+    str.erase(str.find_last_not_of('0') + 1, std::string::npos);
+    str.erase(str.find_last_not_of('.') + 1, std::string::npos);
+    return str;
 }

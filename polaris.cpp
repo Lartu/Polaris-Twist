@@ -1,35 +1,7 @@
-#include "polaris_definitions.hpp"
-#include <iostream>
-#include <dlfcn.h>
+#include "polaris.hpp"
 
-void load_module_handler(PolarisInterpreter &intr, const std::string &word)
-{
-    std::string lib_name = intr.pop_value(word) + ".plib";
-    void *handle = dlopen(lib_name.c_str(), RTLD_LAZY);
-    if (!handle)
-    {
-        intr.throw_error("Cannot link library: " + lib_name);
-        return;
-    }
-
-    // Load the symbol
-    dlerror(); // Reset errors
-    LinkPolarisHandlers call_link_handlers = (LinkPolarisHandlers)dlsym(handle, "link_polaris_handlers");
-    const char *dlsym_error = dlerror();
-    if (dlsym_error)
-    {
-        dlclose(handle);
-        intr.throw_error("Cannot load symbol 'link_polaris_handlers': " + (std::string)dlsym_error);
-        return;
-    }
-    
-    call_link_handlers(intr);
-}
-
-void com_stack_handler(PolarisInterpreter &intr, const std::string &word)
-{
-    intr.print_stack();
-}
+size_t interpreter_counter = 0;
+std::map<size_t, PolarisInterpreter> interpreters;
 
 int main(int argc, char *argv[])
 {
@@ -39,10 +11,70 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    PolarisInterpreter intr;
-    intr.link_command_word("link", load_module_handler);
-    intr.run_code("basic link");
-    intr.run_code(intr.load_source_file(argv[1]));
+    size_t intr_id = new_interpreter();
+    PolarisInterpreter* intr = get_interpreter_by_id(intr_id);
+    register_default_commands(*intr);
+    intr->run_code(intr->load_source_file(argv[1]));
 
     return 0;
+}
+
+size_t get_new_interpreter_id()
+{
+    size_t new_intr_id = interpreter_counter;
+    interpreter_counter += 1;
+    return new_intr_id;
+}
+
+size_t new_interpreter()
+{
+    size_t new_intr_id = get_new_interpreter_id();
+    PolarisInterpreter new_intr = PolarisInterpreter(new_intr_id);
+    interpreters.insert(std::make_pair(new_intr_id, new_intr));
+    return new_intr_id;
+}
+
+extern "C" size_t new_child_interpreter(size_t parent_intr_id)
+{
+    size_t new_intr_id = get_new_interpreter_id();
+    PolarisInterpreter &parent_intr = *get_interpreter_by_id(parent_intr_id);
+    PolarisInterpreter new_intr = PolarisInterpreter(new_intr_id, parent_intr.variables, parent_intr.command_words);
+    interpreters.insert(std::make_pair(new_intr_id, new_intr));
+    return new_intr_id;
+}
+
+extern "C" void run_code_in_interpreter(size_t intr_id, const char *code)
+{
+    get_interpreter_by_id(intr_id)->run_code(code);
+}
+
+extern "C" char *pop_value_from_interpreter(size_t intr_id, const char *word)
+{
+    char *popped_value = strdup(get_interpreter_by_id(intr_id)->pop_value(word).c_str());
+    return popped_value;
+}
+
+extern "C" void push_value_to_interpreter(size_t intr_id, const char *value)
+{
+    get_interpreter_by_id(intr_id)->push_value(value);
+}
+
+extern "C" size_t get_interpreter_stack_size(size_t intr_id)
+{
+    return get_interpreter_by_id(intr_id)->execution_stack.size();
+}
+
+PolarisInterpreter *get_interpreter_by_id(size_t intr_id)
+{
+    std::map<size_t, PolarisInterpreter>::iterator it = interpreters.find(intr_id);
+    if (it != interpreters.end())
+    {
+        return &(it->second);
+    }
+    return nullptr;
+}
+
+extern "C" void link_command_for_interpreter(size_t intr_id, const char *word, PolarisHandler handler)
+{
+    get_interpreter_by_id(intr_id)->link_command_word(word, handler);
 }

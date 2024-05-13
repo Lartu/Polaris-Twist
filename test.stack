@@ -1,3 +1,34 @@
-# Polaris Quine
-("(" @f ") >f f%" fprint) >f f%
-stack
+
+test load [ <-- cargo la extensión "test" ]
+pito print
+
+
+
+
+[("(" @f ") >f f%" fprint) >f f%
+
+"" >a
+
+[while] (@a "aaaa" !=) [do] (
+    @a copy print "a" join >a
+) while
+
+[if] (@a "aaaa" =) [then] (
+    "Llegué!" print
+) [else] (
+    "Falta" print
+) if
+
+"*" >1
+@1 >2
+@1 print
+@2 print
+"" >a
+[while] (@a "aaaaaaaaaa" !=) [do] (
+    @2 >swap
+    @1 @2 join >2
+    @swap >1
+    @2 print
+    [increase counter]
+    @a "a" join >a
+) while]

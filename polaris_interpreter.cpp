@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "polaris_definitions.hpp"
+#include "polaris_interpreter.hpp"
 #include "tokenizer.hpp"
 
 PolarisWord::PolarisWord(std::string word, StringType type)
@@ -21,13 +21,15 @@ StringType PolarisWord::get_type() const
     return this->_type;
 }
 
-PolarisInterpreter::PolarisInterpreter()
+PolarisInterpreter::PolarisInterpreter(size_t id)
 {
+    this->self_intr_id = id;
     this->execution_halted = false;
 }
 
-PolarisInterpreter::PolarisInterpreter(const std::map<std::string, std::string> &parent_variables, const std::map<std::string, PolarisHandler> &parent_commands)
+PolarisInterpreter::PolarisInterpreter(size_t id, const std::map<std::string, std::string> &parent_variables, const std::map<std::string, PolarisHandler> &parent_commands)
 {
+    this->self_intr_id = id;
     this->variables = parent_variables;
     this->command_words = parent_commands;
     this->execution_halted = false;
@@ -131,28 +133,7 @@ bool PolarisInterpreter::is_command_word(const std::string &word) const
 
 void PolarisInterpreter::execute_command_word(const std::string &word)
 {
-    this->command_words[word](*this, word);
-}
-
-double PolarisInterpreter::string_to_number(const std::string &value) const
-{
-    return stod(value);
-}
-
-bool PolarisInterpreter::string_is_number(const std::string &value) const
-{
-    std::istringstream iss(value);
-    double d;
-    char c;
-    return iss >> d && !(iss >> c);
-}
-
-std::string PolarisInterpreter::number_to_string(double value) const
-{
-    std::string str = std::to_string(value);
-    str.erase(str.find_last_not_of('0') + 1, std::string::npos);
-    str.erase(str.find_last_not_of('.') + 1, std::string::npos);
-    return str;
+    this->command_words[word](this->self_intr_id);
 }
 
 void PolarisInterpreter::set_variable(const std::string &var_name, const std::string &value)
@@ -175,6 +156,9 @@ std::string PolarisInterpreter::get_variable(const std::string &var_name)
 
 void PolarisInterpreter::run_code(const std::string &code)
 {
+    if(this->execution_halted){
+        return;
+    }
     std::pair<bool, std::vector<PolarisWord> *> tokenized_words = split_words(*this, code);
     if (tokenized_words.first) // No errors during tokenization
     {
