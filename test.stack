@@ -1,6 +1,11 @@
 
 test load [ <-- cargo la extensión "test" ]
-pito print
+1000 sleep
+"Done!" print
+1000 sleep
+"Done!" print
+1000 sleep
+"Done!" print
 
 
 

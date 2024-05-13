@@ -1,9 +1,14 @@
 #include "polaris_dev.h"
+#include <chrono>
+#include <thread>
 
-// Comand: pito (pushea un pito al stack)
-void com_pito_handler(size_t interpreter_id)
+// Comand: wait
+void com_sleep_handler(size_t interpreter_id)
 {
-    polaris_push_value_to_intr(interpreter_id, "<===3");
+    char * value = polaris_pop_value_from_intr(interpreter_id, "sleep");
+    long milliseconds = stol(std::string(value));
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    free(value);
 }
 
 // --- Polaris Extension Entrypoint ---
@@ -13,5 +18,5 @@ extern "C" void polaris_ext_entrypoint(size_t interpreter_id, POLARIS_EP_ARGS)
     polaris_ext_setup(POLARIS_EXTSETUP_PARS);
 
     // --- Link words to handlers ---
-    polaris_link_handler(interpreter_id, "pito", com_pito_handler);
+    polaris_link_handler(interpreter_id, "sleep", com_sleep_handler);
 }
