@@ -7,7 +7,7 @@ rm -f *.plib
 
 # Compile objects
 g++ -std=c++98 -c tokenizer.cpp -o tokenizer.o -Ofast -march=native
-g++ -std=c++98 -c polaris_interpreter.cpp -o polaris_interpreter.o -Ofast -march=native -fPIC
+g++ -std=c++98 -c polaris_interpreter.cpp -o polaris_interpreter.o -Ofast -march=native
 g++ -std=c++98 -c polaris.cpp -o polaris.o -Ofast -march=native
 g++ -std=c++98 -c included_handlers.cpp -o included_handlers.o -Ofast -march=native
 

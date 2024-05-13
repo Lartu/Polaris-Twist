@@ -28,6 +28,7 @@ void register_default_commands(PolarisInterpreter &interpreter);
 #define AND_COM "&"
 #define OR_COM "|"
 #define LOAD_COM "load"
+#define VERSION_COM "polaris_version"
 
 // Handlers
 void com_error_handler(size_t interpreter_id);
@@ -51,6 +52,7 @@ void com_not_handler(size_t interpreter_id);
 void com_and_handler(size_t interpreter_id);
 void com_or_handler(size_t interpreter_id);
 void com_load_handler(size_t interpreter_id);
+void com_version_handler(size_t interpreter_id);
 #endif
 
 /*double PolarisInterpreter::string_to_number(const std::string &value) const

@@ -8,6 +8,18 @@
 #include <dlfcn.h>
 #include <string.h>
 
+#ifndef POLARIS_VERSION
+#define POLARIS_VERSION "Unknown"
+#endif
+
+#ifndef COMPILEDATE
+#define COMPILEDATE "a date"
+#endif
+
+#ifndef COMPILEHOUR
+#define COMPILEHOUR "a lovely hour"
+#endif
+
 int main(int argc, char *argv[]);
 PolarisInterpreter *get_interpreter_by_id(size_t intr_id);
 size_t new_interpreter();

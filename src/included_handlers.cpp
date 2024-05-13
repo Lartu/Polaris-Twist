@@ -29,6 +29,7 @@ void register_default_commands(PolarisInterpreter &interpreter)
     interpreter.link_command_word(AND_COM, com_and_handler);
     interpreter.link_command_word(OR_COM, com_or_handler);
     interpreter.link_command_word(LOAD_COM, com_load_handler);
+    interpreter.link_command_word(VERSION_COM, com_version_handler);
 }
 
 // Command: error
@@ -253,4 +254,11 @@ void com_load_handler(size_t interpreter_id)
                        run_code_in_interpreter, push_value_to_interpreter,
                        pop_value_from_interpreter,
                        get_interpreter_stack_size);
+}
+
+// Command: polaris_version
+void com_version_handler(size_t interpreter_id)
+{
+    PolarisInterpreter *intr = get_interpreter_by_id(interpreter_id);
+    intr->push_value(POLARIS_VERSION);
 }
