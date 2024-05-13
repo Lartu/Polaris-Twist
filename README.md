@@ -17,11 +17,11 @@ It has been written in C++98, so it can probably be compiled with any C++ compil
 ("(" @f ") >f f%" fprint) >f f%
 ```
 
-# Building Polaris Twist
+## Building Polaris Twist
 To build Polaris Twist, clone this repository and run `make`. You can install it using `make install`.
 
-# Documentation
+## Documentation
 I owe you the documentation. Sorry! Soon!
 
-# License
+## License
 The Polaris Twist interpreter is distributed under the Apache 2.0 License. Copyright (c) 2020-2024, Lartu ([www.lartu.net](https://www.lartu.net)).
