@@ -8,16 +8,31 @@ int main(int argc, char *argv[])
     if (argc < 2)
     {
         std::cerr << "Usage: " << argv[0] << " <filename>\n";
-        std::cout << "This is Polaris " << POLARIS_VERSION << ". Nice!" << std::endl;
-        std::cout << "(c) Lartu (www.lartu.net), 2020-2024." << std::endl;
-        std::cout << "This interpreter was compiled on " << COMPILEDATE << " at " << COMPILEHOUR << "." << std::endl;
         return 1;
     }
 
-    size_t intr_id = new_interpreter();
-    PolarisInterpreter *intr = get_interpreter_by_id(intr_id);
-    register_default_commands(*intr);
-    intr->run_code(intr->load_source_file(argv[1]));
+    else if (argc >= 2 && std::string(argv[1]) == "-v")
+    {
+        std::cout << std::endl;
+        std::cout << " Pure, Minimal..." << std::endl;
+        std::cout << " This is Polaris Twist version " << POLARIS_VERSION << "!" << std::endl;
+        std::cout << std::endl;
+        std::cout << " Copyright (c) Lartu (www.lartu.net), 2020-2024." << std::endl;
+        std::cout << " Polaris Twist may be copied only under the terms of the Apache License" << std::endl;
+        std::cout << " Version 2.0, which can be found in the Polaris Twist repository." << std::endl;
+        std::cout << std::endl;
+        std::cout << " This interpreter was compiled on " << COMPILEDATE << " at " << COMPILEHOUR << "." << std::endl;
+        std::cout << std::endl;
+        return 0;
+    }
+
+    else
+    {
+        size_t intr_id = new_interpreter();
+        PolarisInterpreter *intr = get_interpreter_by_id(intr_id);
+        register_default_commands(*intr);
+        intr->run_code(intr->load_source_file(argv[1]));
+    }
 
     return 0;
 }

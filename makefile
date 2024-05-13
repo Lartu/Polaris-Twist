@@ -3,7 +3,7 @@
 # +----------+
 
 # --- Version Information ---
-POLARIS_VERSION = '"1.0"'  #LDPL Version
+POLARIS_VERSION = '"1.0"'  #Polaris Version
 
 # --- Options ---
 #PREFIX is environment variable, but if it is not set, then set default value
