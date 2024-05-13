@@ -21,7 +21,7 @@ It has been written in C++98, so it can probably be compiled with any C++ compil
 To build Polaris Twist, clone this repository and run `make`. You can install it using `make install`.
 
 # Documentation
-I owe you some documentation. Sorry, soon!
+I owe you the documentation. Sorry! Soon!
 
 # License
 The Polaris Twist interpreter is distributed under the Apache 2.0 License. Copyright (c) 2020-2024, Lartu ([www.lartu.net](https://www.lartu.net)).
