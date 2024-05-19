@@ -6,19 +6,19 @@ void add_word(std::string &word, StringType type, std::vector<PolarisWord> *word
     {
         if (word.length() > 0)
         {
-            if (word[0] == '>')
+            if (word[0] == '>' && word.length() >= 2)
             {
                 word = word.substr(1);
                 word_list->push_back(PolarisWord(word, sBLOCK));
                 word_list->push_back(PolarisWord("set", sWORD));
             }
-            else if (word[0] == '@')
+            else if (word[0] == '@' && word.length() >= 2)
             {
                 word = word.substr(1);
                 word_list->push_back(PolarisWord(word, sBLOCK));
                 word_list->push_back(PolarisWord("get", sWORD));
             }
-            else if (word.back() == '%')
+            else if (word.back() == '%' && word.length() >= 2)
             {
                 word = word.substr(0, word.length() - 1);
                 word_list->push_back(PolarisWord(word, sBLOCK));

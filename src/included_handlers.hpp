@@ -1,6 +1,7 @@
 #ifndef POLARIS_HANDLERS
 #define POLARIS_HANDLERS
 #include "polaris.hpp"
+#include "tokenizer.hpp"
 #include <iostream>
 
 // Register Function
@@ -10,6 +11,7 @@ void register_default_commands(PolarisInterpreter &interpreter);
 #define ERROR_COM "error"
 #define SET_COM "set"
 #define GET_COM "get"
+#define VAREX_COM "varex"
 #define PRINT_COM "print"
 #define FPRINT_COM "fprint"
 #define STACK_COM "stack"
@@ -29,11 +31,13 @@ void register_default_commands(PolarisInterpreter &interpreter);
 #define OR_COM "|"
 #define LOAD_COM "load"
 #define VERSION_COM "polaris_version"
+#define LEN_COM "len"
 
 // Handlers
 void com_error_handler(size_t interpreter_id);
 void com_set_handler(size_t interpreter_id);
 void com_get_handler(size_t interpreter_id);
+void com_varex_handler(size_t interpreter_id);
 void com_print_handler(size_t interpreter_id);
 void com_fprint_handler(size_t interpreter_id);
 void com_stack_handler(size_t interpreter_id);
@@ -53,6 +57,7 @@ void com_and_handler(size_t interpreter_id);
 void com_or_handler(size_t interpreter_id);
 void com_load_handler(size_t interpreter_id);
 void com_version_handler(size_t interpreter_id);
+void com_len_handler(size_t interpreter_id);
 #endif
 
 /*double PolarisInterpreter::string_to_number(const std::string &value) const

@@ -11,6 +11,7 @@ void register_default_commands(PolarisInterpreter &interpreter)
     interpreter.link_command_word(ERROR_COM, com_error_handler);
     interpreter.link_command_word(SET_COM, com_set_handler);
     interpreter.link_command_word(GET_COM, com_get_handler);
+    interpreter.link_command_word(VAREX_COM, com_varex_handler);
     interpreter.link_command_word(PRINT_COM, com_print_handler);
     interpreter.link_command_word(FPRINT_COM, com_fprint_handler);
     interpreter.link_command_word(STACK_COM, com_stack_handler);
@@ -30,6 +31,7 @@ void register_default_commands(PolarisInterpreter &interpreter)
     interpreter.link_command_word(OR_COM, com_or_handler);
     interpreter.link_command_word(LOAD_COM, com_load_handler);
     interpreter.link_command_word(VERSION_COM, com_version_handler);
+    interpreter.link_command_word(LEN_COM, com_len_handler);
 }
 
 // Command: error
@@ -54,6 +56,14 @@ void com_get_handler(size_t interpreter_id)
     PolarisInterpreter *intr = get_interpreter_by_id(interpreter_id);
     std::string var_name = intr->pop_value(GET_COM);
     intr->push_value(intr->get_variable(var_name));
+}
+
+// Command: varex
+void com_varex_handler(size_t interpreter_id)
+{
+    PolarisInterpreter *intr = get_interpreter_by_id(interpreter_id);
+    std::string var_name = intr->pop_value(VAREX_COM);
+    intr->push_value(intr->variables.count(var_name) > 0 ? "1" : "0");
 }
 
 // Command: print
@@ -261,4 +271,12 @@ void com_version_handler(size_t interpreter_id)
 {
     PolarisInterpreter *intr = get_interpreter_by_id(interpreter_id);
     intr->push_value(POLARIS_VERSION);
+}
+
+// Command: len
+void com_len_handler(size_t interpreter_id)
+{
+    PolarisInterpreter *intr = get_interpreter_by_id(interpreter_id);
+    std::string a = intr->pop_value(LEN_COM);
+    intr->push_value(number_to_string(a.length()));
 }
