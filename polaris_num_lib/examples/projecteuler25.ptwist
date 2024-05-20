@@ -1,0 +1,58 @@
+"build/ints" load
+
+[ Polaris 2020 scoping library ]
+
+0 >__$scopecount
+
+( [ "addsc": Adds a local scope ]
+    @__$scopecount 1 + >__$scopecount
+) >addsc
+
+( [ "delsc": Deletes a local scope]
+    (@__$scopecount 0 >)
+        (@__$scopecount 1 - >__$scopecount)
+        ("No scopes left to delete when calling delsc." pliberror%)
+        if
+) >delsc
+
+( [ "lset": Saves a local variable ]
+    [ Par 1: value ]
+    [ Par 2: var name (top)]
+    "__$localvar" @__$scopecount join join set
+) >lset
+
+( [ "lget": Gets a local variable ]
+    [ Par 1: value ]
+    "__$localvar" @__$scopecount join join get
+) >lget
+
+
+
+[ Project Euler Problem 25 ]
+
+[fibonacci i] ( addsc%
+    n lset%
+    [ Check if the number is already catched ]
+    [if] ("fibo" n lget% join varex 1 =) [then] (
+        "fibo" n lget% join get
+    ) [else] (
+        [if] (n lget% 1 <=) [then] (
+            n lget%
+        ) [else] (
+            n lget% 1 - fibonacci%   n lget% 2 - fibonacci%   +
+            copy "fibo" n lget% join set
+        ) if
+    ) if
+delsc% ) >fibonacci
+
+-1 >i
+0 >lastfibo
+1000 >digits
+[while] (@lastfibo len @digits <) [do] (
+    @i 1 + >i
+    @i fibonacci% >lastfibo
+) while
+
+"First Fibonacci number with " @digits " digits:" fprint
+@lastfibo print
+"Index: " @i fprint

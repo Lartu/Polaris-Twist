@@ -1,0 +1,89 @@
+"build/ints" load
+
+[ Polaris 2020 scoping library ]
+
+0 >__$scopecount
+
+( [ "addsc": Adds a local scope ]
+    @__$scopecount 1 + >__$scopecount
+) >addsc
+
+( [ "delsc": Deletes a local scope]
+    (@__$scopecount 0 ?>)
+        (@__$scopecount 1 - >__$scopecount)
+        ("No scopes left to delete when calling delsc." pliberror%)
+        if
+) >delsc
+
+( [ "lset": Saves a local variable ]
+    [ Par 1: value ]
+    [ Par 2: var name (top)]
+    "__$localvar" @__$scopecount join join set
+) >lset
+
+( [ "lget": Gets a local variable ]
+    [ Par 1: value ]
+    "__$localvar" @__$scopecount join join get
+) >lget
+
+
+
+[ Project Euler Problem 3 ]
+
+[isprime] (
+    [ignore even numbers]
+    copy (2 % 0 !=) (
+        addsc%
+        n lset%
+        [if it was already catched, return it]
+        [if] ("prime" n lget% join varex 1 =) [then] (
+            "prime" n lget% join get
+        ) [else] (
+            n lget% intsqrt max lset%
+            max lget% i lset%
+            0 found lset%
+            [while] (i lget% 2 ?>= found lget% ! &) [do] (
+                [if] (n lget% i lget% % 0 =) [then] (
+                    1 found lset%
+                )()if
+                i lget% 1 - i lset%
+            )while
+            [if was prime, catch]
+            found lget% ! "prime" n lget% join set
+            found lget% !
+        )if
+        delsc%
+    )(del 0)if
+) >isprime
+
+[getbiggestprimefactor] (
+    [ignore even numbers]
+    addsc%
+        n lset%
+        [if it was already catched, return it]
+        [if] ("prime" n lget% join varex 1 =) [then] (
+            "prime" n lget% join get
+        ) [else] (
+            n lget% intsqrt max lset%
+            max lget% i lset%
+            0 found lset%
+            [while] (i lget% 2 ?>= found lget% ! &) [do] (
+                [if] (n lget% i lget% % 0 =) [then] (
+                    [if] (i lget% isprime%) [then] (  [Only check prime factors]
+                        "Biggest prime factor: " i lget% fprint
+                        1 found lset%
+                    )()if
+                )()if
+                i lget% 1 - i lset%
+            )while
+            [if was prime, catch]
+            found lget% ! "prime" n lget% join set
+            found lget% !
+        )if
+    delsc%
+) >getbiggestprimefactor
+
+[ 170141183460469231731687303715884105727 isprime% print ]
+[  getbiggestprimefactor% print ]
+600851475143 >n
+@n copy print getbiggestprimefactor% (!) ("No es primo") ("Es primo") if print
